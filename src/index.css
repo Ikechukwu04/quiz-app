@@ -34,7 +34,7 @@ body {
   text-align: center;
   min-width: 320px;
   min-height: 100vh;
-  background-image: url(C:\Users\Godwin\FE_Capstone_Project_Quiz_App\quiz-app\public\images.jpg);
+  background-image: url('/images.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
