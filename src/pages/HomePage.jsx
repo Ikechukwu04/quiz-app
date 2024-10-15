@@ -6,24 +6,46 @@ const HomePage = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [difficulty, setDifficulty] = useState('easy');
   const [questionCount, setQuestionCount] = useState(10);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   // Fetch categories from the API
   useEffect(() => {
-    fetch('https://opentdb.com/api_category.php')
-      .then((response) => response.json())
-      .then((data) => setCategories(data.trivia_categories))
-      .catch((error) => console.error('Error fetching categories:', error));
+    const fetchCategories = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('https://opentdb.com/api_category.php');
+        const data = await response.json();
+        setCategories(data.trivia_categories);
+        setError(''); // Clear any existing error
+      } catch (error) {
+        setError('Failed to load categories. Please try again later.');
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   const startQuiz = () => {
-    navigate('/quiz', { state: { selectedCategory, difficulty, questionCount } });
-  };
+    if (!selectedCategory) {
+        setError('Please select a category.');
+        return;
+      }
+      navigate('/quiz', { state: { selectedCategory, difficulty, questionCount } });
+    };
 
   return (
     <div className="flex flex-col items-center space-y-4">
       <h1 >Welcome to Ike's Quiz App</h1>
       <h2> Test your knowledge with fun quizzes.</h2>
+      {loading && <p>Loading categories...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+      {!loading && !error && (
+        <>
       <select
         value={selectedCategory}
         onChange={(e) => setSelectedCategory(e.target.value)}
@@ -59,6 +81,8 @@ const HomePage = () => {
       <button onClick={startQuiz} className="bg-blue-500 text-white px-4 py-2 rounded">
         Start Quiz
       </button>
+      </>
+      )}
     </div>
   );
 };

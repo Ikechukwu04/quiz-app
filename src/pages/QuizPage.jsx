@@ -7,11 +7,13 @@ const QuizPage = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchQuestions = async () => {
-      const response = await fetch(
+      const response = await fetch (
         `https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple`
       );
       const data = await response.json();
